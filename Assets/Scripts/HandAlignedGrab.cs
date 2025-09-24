@@ -16,21 +16,16 @@ public class HandAlignedGrab : OVRGrabbable
     {
         base.GrabBegin(hand, grabPoint);
 
-        // Tell the gun shooter script which hand is holding the gun
         if (gunShooter != null)
         {
             gunShooter.SetGrabber(hand);
         }
 
-        if (hand.gameObject.name.Contains("Right"))
-        {
-            transform.position = rightHandPose.position;
-            transform.rotation = rightHandPose.rotation;
-        }
-        else if (hand.gameObject.name.Contains("Left"))
-        {
-            transform.position = leftHandPose.position;
-            transform.rotation = leftHandPose.rotation;
-        }
+        Transform pose = hand.gameObject.name.Contains("Right") ? rightHandPose : leftHandPose;
+
+        // gun relative to hand
+        transform.position = hand.transform.TransformPoint(pose.localPosition);
+        transform.rotation = hand.transform.rotation * pose.localRotation;
     }
+
 }
