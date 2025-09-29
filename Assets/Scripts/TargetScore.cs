@@ -26,7 +26,7 @@ public class TargetScore : MonoBehaviour
     public bool fallbackToClosestPoint = true;
 
     [Header("Runtime visuals")]
-    public bool showRuntimeRings = true;
+    public bool showRuntimeRings = false;
     public int ringSegments = 64;
     public float ringLineWidth = 0.02f;
     public Material ringMaterial; // optional - if null a simple material will be created
@@ -240,15 +240,13 @@ public class TargetScore : MonoBehaviour
     {
         for (int i = _ringObjects.Count - 1; i >= 0; i--)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying) DestroyImmediate(_ringObjects[i]);
-            else Destroy(_ringObjects[i]);
-#else
-            Destroy(_ringObjects[i]);
-#endif
+            if (_ringObjects[i] != null)
+                Destroy(_ringObjects[i]);
         }
+
         _ringObjects.Clear();
     }
+
     #endregion
 
     #region Editor gizmo (keeps previous behaviour but aligned with target)
