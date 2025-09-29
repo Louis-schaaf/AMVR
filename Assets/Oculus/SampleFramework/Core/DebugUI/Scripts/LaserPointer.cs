@@ -72,6 +72,7 @@ public class LaserPointer : OVRCursor
 
     private void Start()
     {
+        laserBeamBehavior = LaserPointer.LaserBeamBehavior.On;
         if (cursorVisual) cursorVisual.SetActive(false);
         OVRManager.InputFocusAcquired += OnInputFocusAcquired;
         OVRManager.InputFocusLost += OnInputFocusLost;
@@ -91,26 +92,13 @@ public class LaserPointer : OVRCursor
         _hitTarget = false;
     }
 
-    private void LateUpdate()
+    void LateUpdate()
     {
-        lineRenderer.SetPosition(0, _startPoint);
-        if (_hitTarget)
-        {
-            lineRenderer.SetPosition(1, _endPoint);
-            UpdateLaserBeam(_startPoint, _endPoint);
-            if (cursorVisual)
-            {
-                cursorVisual.transform.position = _endPoint;
-                cursorVisual.SetActive(true);
-            }
-        }
-        else
-        {
-            UpdateLaserBeam(_startPoint, _startPoint + maxLength * _forward);
-            lineRenderer.SetPosition(1, _startPoint + maxLength * _forward);
-            if (cursorVisual) cursorVisual.SetActive(false);
-        }
+        lineRenderer.enabled = true;
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, transform.position + transform.forward * 5f);
     }
+
 
     // make laser beam a behavior with a prop that enables or disables
     private void UpdateLaserBeam(Vector3 start, Vector3 end)
