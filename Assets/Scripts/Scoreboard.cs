@@ -22,4 +22,10 @@ public class Scoreboard : MonoBehaviour
         if (scoreText != null)
             scoreText.text = $"Score: {currentScore}";
     }
+
+    public void ResetScore()
+    {
+        currentScore = 0;
+        UpdateUI();
+    }
 }

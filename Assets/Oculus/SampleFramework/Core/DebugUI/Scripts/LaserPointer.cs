@@ -24,6 +24,8 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
+
 
 public class LaserPointer : OVRCursor
 {
@@ -37,6 +39,7 @@ public class LaserPointer : OVRCursor
     public GameObject cursorVisual;
     public float maxLength = 10.0f;
 
+    [SerializeField]
     private LaserBeamBehavior _laserBeamBehavior;
     bool m_restoreOnInputAcquired = false;
 
@@ -94,10 +97,39 @@ public class LaserPointer : OVRCursor
 
     void LateUpdate()
     {
-        lineRenderer.enabled = true;
-        lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, transform.position + transform.forward * 5f);
+        // Create event data for raycasting from the controller
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = new Vector2(Screen.width / 2, Screen.height / 2); // or derive from controller pose if needed
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        bool hitMenu = false;
+        Vector3 hitPoint = Vector3.zero;
+
+        foreach (var result in results)
+        {
+            if (result.gameObject.CompareTag("Menu"))
+            {
+                hitMenu = true;
+                // If your canvas is in world space, we can approximate a hit point:
+                hitPoint = result.worldPosition;
+                break;
+            }
+        }
+
+        if (hitMenu)
+        {
+            lineRenderer.enabled = true;
+            lineRenderer.SetPosition(0, transform.position);
+            lineRenderer.SetPosition(1, hitPoint);
+        }
+        else
+        {
+            lineRenderer.enabled = false;
+        }
     }
+
 
 
     // make laser beam a behavior with a prop that enables or disables
