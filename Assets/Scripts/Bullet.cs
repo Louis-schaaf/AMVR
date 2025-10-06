@@ -2,36 +2,53 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float speed = 20f; // The speed of the bullet
-    public float lifeTime = 3f; // The time before the bullet is destroyed
+    [Header("Bullet Settings")]
+    public float speed = 20f;      // Speed of the bullet
+    public float lifeTime = 3f;    // Time before the bullet is destroyed
+
+    [Header("Bullet Hole")]
+    public GameObject bulletHolePrefab; // Assign your BulletHole prefab in the Inspector
 
     private Rigidbody rb;
 
     void Start()
     {
-        // Get the Rigidbody component
         rb = GetComponent<Rigidbody>();
-
-        // Destroy the bullet after its lifeTime has passed
         Destroy(gameObject, lifeTime);
     }
 
     void FixedUpdate()
     {
-        // Move the bullet forward using the Rigidbody
         rb.velocity = transform.forward * speed;
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        // Check if the bullet hits a target
-        // if (collision.gameObject.CompareTag("Target"))
-        // {
-        //     // Handle target hit logic here (e.g., scoring, dealing damage)
-        //     Debug.Log("Hit " + collision.gameObject.name);
-        // }
+        // Get first contact point
+        ContactPoint contact = collision.contacts[0];
 
-        // Destroy the bullet on collision
+        // Spawn bullet hole
+        if (bulletHolePrefab != null)
+        {
+            // Align the bullet hole to the surface normal
+            Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, contact.normal);
+
+            // Slightly offset from the surface to prevent z-fighting
+            Vector3 spawnPosition = contact.point + contact.normal * 0.001f;
+
+            GameObject hole = Instantiate(bulletHolePrefab, spawnPosition, rotation);
+
+            // Make the hole stick to the object that was hit
+            hole.transform.SetParent(collision.transform);
+
+            // Randomize rotation for visual variety
+            hole.transform.Rotate(Vector3.forward, Random.Range(0f, 360f));
+
+            // Optionally destroy after a delay to clean up old decals
+            Destroy(hole, 10f);
+        }
+
+        // Destroy bullet immediately after impact
         Destroy(gameObject);
     }
 }

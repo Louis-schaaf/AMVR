@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5101924799528988207}
   - component: {fileID: 9173334668393005455}
   - component: {fileID: 1504810939412262010}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bullet
   m_TagString: Bullet
   m_Icon: {fileID: 0}
@@ -115,6 +115,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 20
   lifeTime: 300
+  bulletHolePrefab: {fileID: 9034299030845437409, guid: a5efab8a11dcac645bb333753aa4024d,
+    type: 3}
 --- !u!64 &9173334668393005455
 MeshCollider:
   m_ObjectHideFlags: 0
