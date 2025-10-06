@@ -12,15 +12,21 @@ public class Shooter : MonoBehaviour
 
     private float nextFireTime;
     private OVRGrabber currentGrabber;
+    private OVRGrabbable grabbable;
 
     public void SetGrabber(OVRGrabber grabber)
     {
         currentGrabber = grabber;
     }
+    
+    void Start()
+    {
+        grabbable = GetComponent<OVRGrabbable>() ?? GetComponentInParent<OVRGrabbable>();
+    }
 
     void Update()
     {
-        if (currentGrabber != null && Time.time > nextFireTime)
+        if (grabbable != null && grabbable.isGrabbed && currentGrabber != null && Time.time > nextFireTime)
         {
             OVRInput.Controller controller = currentGrabber.gameObject.name.Contains("Right") ? OVRInput.Controller.RTouch : OVRInput.Controller.LTouch;
 
